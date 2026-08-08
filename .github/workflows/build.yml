@@ -11,6 +11,9 @@
 name: Java CI with Gradle
 
 on:
+  release:
+    types: [published]
+  workflow_dispatch:
   push:
     branches: [ "space-travel-twopointfive" ]
   pull_request:
@@ -20,7 +23,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
 
     steps:
     - uses: actions/checkout@v4
@@ -61,3 +64,12 @@ jobs:
       with:
         # A file, directory or wildcard pattern that describes what to upload
         path: ./build/libs
+
+    - name: Upload to GitHub Release
+      if: github.event_name == 'release'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release upload ${{ github.event.release.tag_name }} \
+          build/libs/*.jar \
+          --clobber

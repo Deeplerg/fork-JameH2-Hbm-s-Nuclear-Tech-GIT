@@ -71,5 +71,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh release upload ${{ github.event.release.tag_name }} \
-          build/libs/*.jar \
+          "build/libs/*.jar" \
           --clobber
